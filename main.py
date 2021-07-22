@@ -5,6 +5,7 @@ import pyttsx3
 import speech_recognition as sr
 import wikipedia
 import user_info
+import query_listener
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
@@ -54,9 +55,9 @@ def createNewUser():
         while(True):
             speak(f"Please share your good {key}")
             value =  takeCommand().lower()
-            speak(f"Please confirm your name is {key}")
+            speak(f"Please confirm your {key} is {value}")
             res = takeCommand().lower()
-            if 'yes' in res:
+            if 'y' in res:
                 user[key] = value
                 break
     user_info.createNewUser(user)
@@ -66,7 +67,6 @@ def validateUser():
     user = user_info.getUser()
     global USER
     if(user):
-      
        USER = user
     else:
         USER = createNewUser()
@@ -76,28 +76,4 @@ if __name__ == "__main__":
     wishMe()
     while True:
         query = takeCommand().lower()
-
-        if 'wikipedia' in query:
-            speak('Searching Wikipedia...')
-            query = query.replace("wikipedia", "")
-            results = wikipedia.summary(query, sentences=2)
-            speak("According to Wikipedia")
-            print(results)
-            speak(results)
-
-        elif 'open youtube' in query:
-            webbrowser.open("youtube.com")
-
-        elif 'open google' in query:
-            webbrowser.open("google.com")
-
-        elif 'open stackoverflow' in query:
-            webbrowser.open("stackoverflow.com")
-
-        elif 'the time' in query:
-            strTime = datetime.datetime.now().strftime("%H:%M:%S")
-            speak(f"Maam, the time is {strTime}")
-        elif "how much power left" in query or "how much we have" in query or "battery" in query:
-            battery = psutil.sensors_battery()
-            percentage = battery.percent
-            speak(f"Maam the {percentage} of battery left")
+        query_listener.action(query)
